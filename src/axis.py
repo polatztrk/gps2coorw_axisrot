@@ -2,6 +2,7 @@
 import rospy
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import Point
+from visualization_msgs.msg import Marker
 import math
 
 # Global variable for count
@@ -48,13 +49,34 @@ def callback(data):
 
     pub.publish(coor_point)
 
+    marker = Marker()
+    marker.header.frame_id = "map"
+    marker.header.stamp = rospy.Time.now()
+    marker.ns = "gps_points"
+    marker.id = 1
+    marker.type = Marker.SPHERE
+    marker.action = Marker.ADD
+    marker.pose.position.x = x_t
+    marker.pose.position.y = y_t
+    marker.pose.position.z = 0.0
+    marker.scale.x = 0.2
+    marker.scale.y = 0.2
+    marker.scale.z = 0.2
+    marker.color.a = 1.0
+    morker.color.r = 0.0
+    marker.color.g = 1.0
+    marker.color.b = 0.0
+
+    marker_pub.publish(marker)
+
 def gps_subscriber_node():
-    global pub
+    global pub, marker_pub
     # Initialize the ROS node
     rospy.init_node('gps_subscriber', anonymous=True)
 
     # Create a publisher for 'coordinate' topic with Point messages
     pub = rospy.Publisher('coordinate', Point, queue_size=10)
+    marker_pub = rospy.Publisher('visualization_marker', Marker, queue_size=10)
 
     # Subscribe to the "/fix" topic with NavSatFix messages
     rospy.Subscriber('/fix', NavSatFix, callback)
