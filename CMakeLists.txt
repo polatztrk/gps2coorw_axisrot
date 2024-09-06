@@ -15,7 +15,13 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   visualization_msgs
+  message_generation
 )
+
+add_message_files(FILES GPSData.msg)
+generate_messages(DEPENDENCIES std_msgs)
+
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -111,6 +117,12 @@ catkin_package(
 #  LIBRARIES gps2coorw_axisrot
 #  CATKIN_DEPENDS geometry_msgs gps_common roscpp rospy sensor_msgs std_msgs
 #  DEPENDS system_lib
+CATKIN_DEPENDS roscpp rospy std_msgs message_generation message_runtime 
+  geometry_msgs
+  gps_common
+  sensor_msgs
+  visualization_msgs
+  message_generation
 )
 
 ###########
