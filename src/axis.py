@@ -62,27 +62,27 @@ def callback(data):
     coor_point.x = x_t
     coor_point.y = y_t
     coor_point.z = 0.0
-    pub.publish(coor_point)
+    point_pub.publish(coor_point)
 
     # Publish markers for axes
-    publish_axes(0, 0, 0, 1, 0, 0, 0, 1.0, 0, "Original X-axis",12)
-    publish_axes(0, 0, 0, 0, 1, 0, 0, 1.0, 0, "Original Y-axis",71)
+    publish_axes(0, 0, 0, 1, 0, 0, 0, 1.0, 0, "Original X-axis", 12)
+    publish_axes(0, 0, 0, 0, 1, 0, 0, 1.0, 0, "Original Y-axis", 71)
 
     # Rotated X and Y axes
     rotated_x = math.cos(theta)
     rotated_y = math.sin(theta)
-    publish_axes(0, 0, 0, rotated_x, rotated_y, 0, 0, 1.0, 1.0, "Rotated X-axis",7)
-    publish_axes(0, 0, 0, -rotated_y, rotated_x, 0, 0, 1.0, 1.0, "Rotated Y-axis",9)
+    publish_axes(0, 0, 0, rotated_x, rotated_y, 0, 0, 1.0, 1.0, "Rotated X-axis", 7)
+    publish_axes(0, 0, 0, -rotated_y, rotated_x, 0, 0, 1.0, 1.0, "Rotated Y-axis", 9)
 
     # Publish the point as a sphere in RViz
     publish_point_as_marker(x_t, y_t)
 
-def publish_axes(start_x, start_y, start_z, end_x, end_y, end_z, r, g, b, ns,asd):
+def publish_axes(start_x, start_y, start_z, end_x, end_y, end_z, r, g, b, ns, asd):
     marker = Marker()
     marker.header.frame_id = "map"
     marker.header.stamp = rospy.Time.now()
     marker.ns = ns
-    marker.id = 2007+asd
+    marker.id = 2007 + asd
     marker.type = Marker.ARROW
     marker.action = Marker.ADD
     marker.scale.x = 0.025
@@ -95,7 +95,7 @@ def publish_axes(start_x, start_y, start_z, end_x, end_y, end_z, r, g, b, ns,asd
     marker.pose.orientation.w = 1.0
     marker.points.append(Point(start_x, start_y, start_z))
     marker.points.append(Point(end_x, end_y, end_z))
-    marker_pub.publish(marker)
+    axis_marker_pub.publish(marker)
 
 def publish_point_as_marker(x, y):
     marker = Marker()
@@ -115,15 +115,16 @@ def publish_point_as_marker(x, y):
     marker.color.r = 0.0
     marker.color.g = 0.0
     marker.color.b = 1.0
-    marker_pub.publish(marker)
+    point_marker_pub.publish(marker)
 
 def gps_subscriber_node():
-    global pub, marker_pub
+    global point_pub, axis_marker_pub, point_marker_pub
     rospy.init_node('gps_subscriber', anonymous=True)
 
     # Create publishers
-    pub = rospy.Publisher('coordinate', Point, queue_size=10)
-    marker_pub = rospy.Publisher('visualization_marker', Marker, queue_size=10)
+    point_pub = rospy.Publisher('coordinate', Point, queue_size=10)
+    axis_marker_pub = rospy.Publisher('visualization_marker/axes', Marker, queue_size=10)
+    point_marker_pub = rospy.Publisher('visualization_marker/points', Marker, queue_size=10)
 
     # Subscribe to the gps_topic to get initial GPS data
     rospy.Subscriber('/gps_data', GPSData, gps_topic_callback)
